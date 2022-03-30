@@ -134,7 +134,7 @@ With the `PAY_PER_REQUEST` billing mode, AWS manages your table's capacity for y
 
 ### Configure autoscaling
 
-You can autoscale read and write capacity for tables in provisioned billing mode.
+AWS supports Application Autoscaling to manage read and write capacity for tables in provisioned billing mode.
 
 1. Add autoscaling resources. Also, ignore changes to read and write capacity.
 
@@ -339,12 +339,12 @@ Secondary indexes allow you to efficiently access data in your tables by indexes
 
 - GSIs can be created after the table, and have their own primary key and read & write capacities.
 - Like LSIs, attributes used as keys for GSIs must be enumerated in the table definition.
-- You can target autoscaling policies to GSIs as well, and AWS recommends doing so if you use autoscaling on the table itself.
+- AWS recommends autoscaling any GSIs whenever you use autoscaling on the table itself.
 - Refer to the [AWS Documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html) for more info.
 
 ### Configure global tables
 
-Global tables replicate your DynamoDB table across regions. Streaming must be enabled to use global tables, and your table must either be in the "PAY_PER_REQUEST" billing mode, or have autoscaling configured.
+Global tables replicate your DynamoDB table across supported regions. Streaming must be enabled to use global tables, and your table must either be in the "PAY_PER_REQUEST" billing mode, or have autoscaling configured.
 
 Configure global tables in terraform with `replicas` blocks.
 
@@ -380,7 +380,7 @@ Configure global tables in terraform with `replicas` blocks.
     }
     ```
 
-1. Create a new file called 'terraform.tfvars' to set the value of `replica_regions`.
+1. Create a new file called `terraform.tfvars` to set the value of `replica_regions`.
 
     ```hcl
     replica_regions = ["us-west-1", "ap-northeast-1"]
@@ -392,8 +392,8 @@ Configure global tables in terraform with `replicas` blocks.
     ```
 
 - AWS Global Tables use streaming to replicate your table across regions. 
-- In order to configure Global Tables, either autoscaling or the "PAY_PER_REQUEST" billing mode must already be configured on the table. Because of this, you cannot create a new dynamoDB table with autoscaling and global tables using Terraform. Terraform would attempt to create the table before the autoscaling resources, and would return an error from the AWS API.
-    - You can use dynamic blocks to work around this limitation, as demonstrated in the example above. First create the table with `replica_regions` set to the default value (`[]`). Then, update it with the list of regions you want to replicate your table into.
+- In order to configure Global Tables, either autoscaling or the "PAY_PER_REQUEST" billing mode must already be configured on the table. Because of this, you cannot create a new dynamoDB table with autoscaling enabled and Global Tables configured using Terraform. Terraform would attempt to create the table before the autoscaling resources, and would return an error from the AWS API.
+    - You can use dynamic blocks to work around this limitation, as demonstrated in the example above. First create the table with `replica_regions` set to the default value (`[]`). Then update the variable with the list of regions you want to replicate your table into.
     - Refer to [this issue](https://github.com/hashicorp/terraform-provider-aws/issues/13097#issuecomment-933806064) for more information about this limitation.
 - If you are using autoscaling, you must also have autoscaling enabled on any GSIs for the table. (FIXME: I couldn't find this in the AWS documentation, but without AS on the GSI as well, I get the "...table must be austoscaled." error.)
 - Refer to [the AWS documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/globaltables_reqs_bestpractices.html) for more information about global tables.
@@ -401,7 +401,9 @@ Configure global tables in terraform with `replicas` blocks.
 
 ### Manage TTL
 
-DynamoDB supports expiring items with TTL. This can help scale your table by removing items that are no longer needed. Add the following to `main.tf` to enable TTL.
+DynamoDB supports expiring items with TTL. This can help scale your table by removing items that are no longer needed.
+
+1. Add the following to `main.tf` to enable TTL.
 
     ```diff
      resource "aws_dynamodb_table" "environment" {
@@ -417,14 +419,15 @@ DynamoDB supports expiring items with TTL. This can help scale your table by rem
     ```
 
 1. Apply.
-    1. The attribute specified in `attribute_name` must be the epoch time in seconds. Do not enumerate it with an `attribute` block.
-    1. Refer to the [AWS documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/TTL.html) for more details.
+
+- The attribute specified in `attribute_name` must be the epoch time in seconds. Do not enumerate it with an `attribute` block.
+- Refer to the [AWS documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/TTL.html) for more details.
 
 ### Change the table class
 
 In addition to the default `Standard` table class, DynamoDB supports `Standard-Infrequent Access` tables for rarely-accessed data.
 
-Configure your table's class in `main.tf`.
+1. Configure your table's class in `main.tf`.
 
     ```diff
      resource "aws_dynamodb_table" "environment" {
@@ -436,10 +439,11 @@ Configure your table's class in `main.tf`.
     ```
 
 1. Apply.
-  1. Changing the table class does not require replacing the table.
-  1. The AWS API requires that a change to a table's class be the only change made in a given request. Do not attempt to include any other changes to your table when changing the class.
-      1. Tip: You can apply a refresh only plan (`terraform apply -refresh-only`) to ensure your table matches your configuration before updating your table's class.
-  1. Refer to the [AWS Documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/WorkingWithTables.tableclasses.html) for more information.
+
+- Changing the table class does not require replacing the table.
+- The AWS API requires that a change to a table's class be the only change made in a given request. Do not attempt to include any other changes to your table when changing the class.
+    - Tip: You can apply a refresh only plan (`terraform apply -refresh-only`) to ensure your table matches your configuration before updating your table's class.
+- Refer to the [AWS Documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/WorkingWithTables.tableclasses.html) for more information.
 
 ## Use modules
 
@@ -449,8 +453,11 @@ The examples in this tutorial have used resources defined in the AWS provider to
 
 ## Clean up infrastructure
 
+Destroy your table.
+
 1. Destroy
-    1. Note: Destroying a DynamoDB table automatically destroys any items in the table.
+
+- Note: Destroying a DynamoDB table automatically destroys any items in the table.
 
 ## Next steps
 
