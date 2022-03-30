@@ -27,6 +27,9 @@ resource "aws_dynamodb_table" "environment" {
   name         = random_pet.table_name.id
   billing_mode = "PAY_PER_REQUEST"
 
+  hash_key  = "deviceId"
+  range_key = "eventId"
+
   attribute {
     name = "deviceId"
     type = "S"
@@ -36,7 +39,4 @@ resource "aws_dynamodb_table" "environment" {
     name = "eventId"
     type = "S"
   }
-
-  hash_key  = "deviceId"
-  range_key = "eventId"
 }
