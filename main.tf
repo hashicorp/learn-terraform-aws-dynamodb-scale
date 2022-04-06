@@ -28,7 +28,7 @@ resource "aws_dynamodb_table" "environment" {
   billing_mode = "PAY_PER_REQUEST"
 
   hash_key  = "deviceId"
-  range_key = "eventId"
+  range_key = "epochS"
 
   attribute {
     name = "deviceId"
@@ -36,7 +36,7 @@ resource "aws_dynamodb_table" "environment" {
   }
 
   attribute {
-    name = "eventId"
-    type = "S"
+    name = "epochS"
+    type = "N"
   }
 }
