@@ -1,7 +1,7 @@
 terraform {
   cloud {
     workspaces {
-      name = "learn-terraform-aws-dynamodb"
+      name = "learn-terraform-aws-dynamodb-scale"
     }
   }
 
