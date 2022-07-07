@@ -3,7 +3,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      hashicorp-learn = "learn-terraform-aws-dynamodb"
+      hashicorp-learn = "learn-terraform-aws-dynamodb-scale"
     }
   }
 }

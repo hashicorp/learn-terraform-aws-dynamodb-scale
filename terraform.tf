@@ -1,14 +1,16 @@
 terraform {
+  /*
   cloud {
     workspaces {
       name = "learn-terraform-aws-dynamodb-scale"
     }
   }
+  */
 
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "4.15.0"
+      version = "4.21.0"
     }
     random = {
       source  = "hashicorp/random"
