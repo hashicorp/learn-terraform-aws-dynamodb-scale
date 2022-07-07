@@ -1,11 +1,9 @@
 terraform {
-  /*
   cloud {
     workspaces {
       name = "learn-terraform-aws-dynamodb-scale"
     }
   }
-  */
 
   required_providers {
     aws = {
