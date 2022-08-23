@@ -1,4 +1,5 @@
 # Learn Terraform - AWS DynamoDB
 
-Follow along with this [tutorial on HashiCorp
-Learn](https://learn.hashicorp.com/tutorials/terraform/aws-dynamodb-scale?in=terraform/aws).
+This is a companion repository for the Hashicorp [Manage AWS DynamoDB Scale
+tutorial](https://developer.hashicorp.com/terraform/tutorials/aws/aws-dynamodb-scale). It contains Terraform
+configuration files for you to use to learn how to configure an AWS DynamoDB table.
